@@ -19,7 +19,6 @@ var appContext = logging.createAppContext();
 
 //Initialize Express App for XS UAA and HDBEXT Middleware
 var app = express();
-var sock;
 
 //Compression
 app.use(require("compression")({
@@ -90,9 +89,7 @@ cds.serve("gen/csn.json", {
 */
 // Redirect any to service root
 app.get("/node", (req, res) => {
-	sock.emit('date', {'date': 'FFFFFF'});
-	res.send("OOK");
-            
+	res.send("OK");
 });
 
 //Start the Server 
@@ -101,29 +98,11 @@ server.on("request", app);
 // use socket.io
 var io = require('socket.io').listen(server);
 
-//turn off debug
-io.set('log level', 1);
-
 // define interactions with client
 io.sockets.on('connection', function(socket){
-	sock = socket;
-	
 	//Setup Additonal Node.js Routes
-	require("./router")(app, server, sock);
-
-    /*
-    //send data to client
-    setInterval(function(){
-        socket.emit('date', {'date': new Date()});
-    }, 1000);
-
-    //recieve client data
-    socket.on('client_data', function(data){
-        console.log(data.letter);
-    });
-    */
+	require("./router")(app, server, socket);
 });
-
 
 
 //Start the Server 

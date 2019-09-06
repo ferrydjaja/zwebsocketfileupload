@@ -1,24 +1,56 @@
-<!doctype html>
 <html>
-  <head>
-    <title>Socket.io Test</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
-  </head>
-  <body>
-    <script>    
-      var socket = io.connect();
-      
-      socket.on('date', function(data){
-        $('#date').text(data.date);
-      });
-      $(document).ready(function(){
-        $('#text').keypress(function(e){
-          socket.emit('client_data', {'letter': String.fromCharCode(e.charCode)});
-        });
-      });
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Socket.IO File Upload</title>
+	<script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        window.onload = function() {
+
+	    function uploadDealcsv() {};
+	
+	    /*------ Method for read uploded csv file ------*/
+	    uploadDealcsv.prototype.getCsv = function(e) {
+	
+	        let input = document.getElementById('dealCsv');
+	        input.addEventListener('change', function() {
+	
+	            if (this.files && this.files[0]) {
+	
+	                var myFile = this.files[0];
+	                var reader = new FileReader();
+	
+	                reader.addEventListener('load', function(e) {
+	
+	                    let csvdata = e.target.result;
+	                    parseCsv.getParsecsvdata(csvdata); // calling function for parse csv data 
+	                });
+	
+	                reader.readAsBinaryString(myFile);
+	            }
+	        });
+	    }
+	
+	    /*------- Method for parse csv data and display --------------*/
+	    uploadDealcsv.prototype.getParsecsvdata = function(data) {
+	
+	        let parsedata = [];
+	        var socket = io.connect();
+	
+	        let newLinebrk = data.split("\n");
+	        for (let i = 1; i < newLinebrk.length; i++) {
+	            parsedata.push(newLinebrk[i].split(","))
+	            socket.emit('client_data', {'letter': newLinebrk[i]
+	            });
+	        }
+	    }
+	
+	    var fileInput = document.getElementById("dealCsv")
+	    var parseCsv = new uploadDealcsv();
+	    fileInput.addEventListener('change', parseCsv.getCsv());
+	}
     </script>
-    <div id="date"></div>
-    <textarea id="text"></textarea>
-  </body>
+</head>
+<body>
+    <p>Select local CSV File:</p>
+    <input id="dealCsv" type="file">
 </html>

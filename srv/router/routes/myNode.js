@@ -6,7 +6,6 @@ var async = require("async");
 
 module.exports = function (sock) {
 	var app = express.Router();
-	var userScope = null;
 
 	//recieve client data
 	sock.on('client_data', function (data) {
@@ -88,18 +87,6 @@ module.exports = function (sock) {
 				});
 			});
 		});
-	});
-
-	app.get("/getSessionInfo", (req, res) => {
-		sock.emit('date', {
-			'date': 'FFFFFF'
-		});
-
-		var userContext = req.authInfo;
-		var result = JSON.stringify({
-			userContext: userContext
-		});
-		res.type("application/json").status(200).send(result);
 	});
 
 	return app;
